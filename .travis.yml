@@ -1,0 +1,10 @@
+language: java
+jdk:
+  - openjdk11
+script: asdf plugin-test micronaut https://github.com/weibemoura/asdf-micronaut.git
+before_script:
+  - git clone https://github.com/asdf-vm/asdf.git
+  - . asdf/asdf.sh
+os:
+  - linux
+  - osx

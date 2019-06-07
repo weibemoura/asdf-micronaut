@@ -1,0 +1,2 @@
+#!/bin/sh 
+curl -s https://github.com/micronaut-projects/micronaut-core/releases | grep -e ".*releases/.*micronaut.*.zip\"" | sed -e "s#^.*/v.*/##" -e "s#.zip.*##" | sort -t. -n | paste -s -d" " -
