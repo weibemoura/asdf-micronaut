@@ -1,3 +1,4 @@
 #!/bin/bash
 
-curl -s https://github.com/micronaut-projects/micronaut-core/releases.atom | grep -e ".*micronaut-core/releases/tag.*\"" | sed -n -e 's#^.*releases/tag/v\([^\"]*\)"/>#\1#p' | sort -t. -n | paste -s -d" " -
+#curl -s https://github.com/micronaut-projects/micronaut-core/releases.atom | grep -e ".*micronaut-core/releases/tag.*\"" | sed -n -e 's#^.*releases/tag/v\([^\"]*\)"/>#\1#p' | sort -t. -n | paste -s -d" " -
+curl -s https://github.com/micronaut-projects/micronaut-core/releases.atom | grep -e ".*micronaut-core/releases/tag.*\"" | sed -n -e 's#^.*releases/tag/v\([^\"]*\)"/>#\1#p' | sort --version-sort | xargs echo
