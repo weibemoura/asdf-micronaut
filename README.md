@@ -1,6 +1,6 @@
 # asdf-micronaut
 
-[![Build Status](https://travis-ci.org/weibemoura/asdf-micronaut.svg?branch=master)](https://travis-ci.org/weibemoura/asdf-micronaut)
+[![Build Status](https://github.com/weibemoura/asdf-micronaut/actions/workflows/asdf.yml/badge.svg)](https://github.com/weibemoura/asdf-micronaut/actions)
 
 [Micronaut](https://micronaut.io) plugin for [asdf](https://github.com/asdf-vm/asdf) version manager
 
