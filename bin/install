@@ -1,43 +1,40 @@
-#!/bin/bash
-# instructions taken straight from https://gradle.org/install/#manually
-if [ "$ASDF_INSTALL_TYPE" = "ref" ]
-then
-	git clone "$ASDF_INSTALL_VERSION" "$ASDF_INSTALL_PATH"
+#!/usr/bin/env bash
+set -eu
+[ "${BASH_VERSINFO[0]}" -ge 3 ] && set -o pipefail
+
+if [ "$ASDF_INSTALL_TYPE" = "ref" ]; then
+    git clone "$ASDF_INSTALL_VERSION" "$ASDF_INSTALL_PATH"
 else
-	mkdir -p "$ASDF_INSTALL_PATH"
-	cd "$ASDF_INSTALL_PATH" || exit 1
+    mkdir -p "$ASDF_INSTALL_PATH"
+    cd "$ASDF_INSTALL_PATH" || exit 1
 
-	if [[ $ASDF_INSTALL_PATH =~ "$ASDF_INSTALL_VERSION" ]]; then
-		rm -rf *
+    if [[ $ASDF_INSTALL_PATH =~ "$ASDF_INSTALL_VERSION" ]]; then
+        rm -rf *
+        unameOut="$(uname -s)"
+        unameArch="$(uname -m)"
+        case "${unameOut}" in
+            Linux*) OS_TYPE=linux ;;
+            Darwin*) OS_TYPE=darwin ;;
+            CYGWIN* | MINGW32* | MSYS* | MINGW*) OS_TYPE=win ;;
+            *) OS_TYPE="UNKNOWN" ;;
+        esac
 
-		VERSION=$(echo $ASDF_INSTALL_VERSION | sed -e "s#^.*-##")
-		FILE_NAME="micronaut-${ASDF_INSTALL_VERSION}"
-		ZIP="${FILE_NAME}.zip"
-		DOWNLOAD_URL=https://github.com/micronaut-projects/micronaut-core/releases/download/v${VERSION}/${ZIP}
+        case "${unameArch}" in
+            x86_64) ARCH=amd64 ;;
+            arm64 | aarch64) ARCH=aarch64 ;;
+            *) echo "Unknown architecture" && exit 1 ;;
+        esac
 
-		# 2.0.0 onwards use a different download URL
-		if [[ "2.0.0" =~ ^2\.[0-9]+\.[0-9]+$ ]]; then
-			unameOut="$(uname -s)"
-			case "${unameOut}" in
-				Linux*)     OS_TYPE=linux;;
-				Darwin*)    OS_TYPE=darwin;;
-				CYGWIN*|MINGW32*|MSYS*|MINGW*)    OS_TYPE=win;;
-				*)          OS_TYPE="UNKNOWN"
-			esac
-			
-			FILE_NAME="mn-${OS_TYPE}-amd64-v${ASDF_INSTALL_VERSION}"
-			ZIP="${FILE_NAME}.zip"
-			DOWNLOAD_URL=https://github.com/micronaut-projects/micronaut-starter/releases/download/v${ASDF_INSTALL_VERSION}/${ZIP}
-		fi
+        FILE_NAME="mn-${OS_TYPE}-${ARCH}-v${ASDF_INSTALL_VERSION}"
+        ZIP="${FILE_NAME}.zip"
+        DOWNLOAD_URL=https://github.com/micronaut-projects/micronaut-starter/releases/download/v${ASDF_INSTALL_VERSION}/${ZIP}
 
+        curl -OJL "$DOWNLOAD_URL"
+        unzip -o "${ZIP}"
+        rm "${ZIP}"
 
-		ZIP="${FILE_NAME}.zip"
-		curl -OJL $DOWNLOAD_URL
-		unzip -o ${ZIP}
-		rm ${ZIP}
-
-		cp -R ${FILE_NAME}/* .
-		rm -rf ${FILE_NAME}/
-		chmod +x bin/*
-	fi
+        cp -R "${FILE_NAME}"/* .
+        rm -rf "${FILE_NAME}"/
+        chmod +x bin/*
+    fi
 fi

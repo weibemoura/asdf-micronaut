@@ -1,4 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -eu
+[ "${BASH_VERSINFO[0]}" -ge 3 ] && set -o pipefail
 
-#curl -s https://github.com/micronaut-projects/micronaut-core/releases.atom | grep -e ".*micronaut-core/releases/tag.*\"" | sed -n -e 's#^.*releases/tag/v\([^\"]*\)"/>#\1#p' | sort -t. -n | paste -s -d" " -
-curl -s https://github.com/micronaut-projects/micronaut-core/releases.atom | grep -e ".*micronaut-core/releases/tag.*\"" | sed -n -e 's#^.*releases/tag/v\([^\"]*\)"/>#\1#p' | sort --version-sort | xargs echo
+git ls-remote --tags https://github.com/micronaut-projects/micronaut-starter "v*" |
+    awk -F/v '$2 !~ /\^\{\}/ {print $2}' |
+    uniq |
+    sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n |
+    tr '\n' ' '
